@@ -1,9 +1,0 @@
-HTTP/1.1 400 User 'example' doesn't have access to project 2
-Server: nginx/1.8.0
-Date: Thu, 23 Jul 2015 02:14:17 GMT
-Content-Type: application/json
-Content-Length: 89
-Connection: keep-alive
-Vary: Cookie
-
-{"status": "badrequest", "message": "User 'example' doesn't have access to project 2"}

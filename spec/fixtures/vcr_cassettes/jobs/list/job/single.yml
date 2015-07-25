@@ -1,0 +1,43 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://XXX:@dash.scrapinghub.com/api/jobs/list.json?job=1/1/6&project=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.8.0
+      Date:
+      - Sat, 25 Jul 2015 18:20:42 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Cookie
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status": "ok", "count": 1, "total": 1, "jobs": [{"responses_received":
+        5323, "items_scraped": 1030, "close_reason": "cancel_timeout", "version":
+        "1434570463", "tags": ["foo", "bar"], "spider": "atlantic_firearms_crawl",
+        "updated_time": "2015-07-23T01:26:37", "priority": 2, "state": "finished",
+        "spider_type": "manual", "spider_args": {}, "started_time": "2015-07-22T23:02:13",
+        "id": "1/1/6", "errors_count": 4, "elapsed": 5377379, "logs": 167}]}'
+    http_version: 
+  recorded_at: Sat, 25 Jul 2015 18:20:42 GMT
+recorded_with: VCR 2.9.3
