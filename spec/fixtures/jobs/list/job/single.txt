@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+Server: nginx/1.8.0
+Date: Thu, 23 Jul 2015 02:18:27 GMT
+Content-Type: application/json
+Content-Length: 440
+Connection: keep-alive
+Vary: Cookie
+
+{"status": "ok", "count": 1, "total": 1, "jobs": [{"responses_received": 5323, "items_scraped": 1030, "close_reason": "cancel_timeout", "version": "1434570463", "tags": [], "spider": "atlantic_firearms_crawl", "updated_time": "2015-07-23T01:26:37", "priority": 2, "state": "finished", "spider_type": "manual", "spider_args": {}, "started_time": "2015-07-22T23:02:13", "id": "1/1/6", "errors_count": 4, "elapsed": 2839713, "logs": 167}]}
