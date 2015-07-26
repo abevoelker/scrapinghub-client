@@ -52,7 +52,13 @@ module ScrapingHub
     end
 
     Contract (KeywordArgs[:project => Nat,
-                          :job => Optional[ArrayOf[String]]]) => Or[Kleisli::Try, Kleisli::Either]
+                          :job => Optional[Or[String, ArrayOf[String]]],
+                          :spider => Optional[String],
+                          :state => Optional[Or["pending", "running", "finished"]],
+                          :has_tag => Optional[Or[String, ArrayOf[String]]],
+                          :lacks_tag => Optional[Or[String, ArrayOf[String]]],
+                          :add_tag => Optional[Or[String, ArrayOf[String]]],
+                          :remove_tag => Optional[Or[String, ArrayOf[String]]] ]) => Or[Kleisli::Try, Kleisli::Either]
     def update(args)
       options = { body: args, basic_auth: { username: @api_key } }
       Try { self.class.post("/api/jobs/update.json", options) } >-> response {

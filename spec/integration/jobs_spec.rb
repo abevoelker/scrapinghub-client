@@ -18,6 +18,8 @@ shared_examples "bad_auth_returns_try" do |cassette|
     expect(js).to be_a Kleisli::Either::Left
     expect(js.left.class).to eq HTTParty::Response
     expect(js.left.response).to be_a Net::HTTPForbidden
+    expect(js.left['status']).to eq("error")
+    expect(js.left["message"]).to match(/^Authentication failed$/)
   end
 end
 
@@ -448,6 +450,117 @@ describe "jobs integration" do
         end
       end
 
+    end
+  end
+
+  describe "update" do
+    let(:action)        { :update }
+    let(:valid_project) { 1 }
+    let(:args)          { {project: valid_project, job: "1/1/18"} }
+
+    it_behaves_like "connection_refused_returns_try"
+    it_behaves_like "bad_auth_returns_try", "jobs/update/bad_auth"
+
+    context "project" do
+      context "given an invalid / non-owned project ID" do
+        use_vcr_cassette "jobs/update/project/invalid"
+        let(:invalid_project) { 2 }
+        let(:args)            { {project: invalid_project} }
+
+        it "returns an error" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Left
+          expect(js.left['status']).to eq("badrequest")
+          expect(js.left["message"]).to match(/^User.*doesn\'t have access to project/)
+        end
+      end
+    end
+
+    context "query filters" do
+      context "without query filters" do
+        use_vcr_cassette "jobs/update/no-query-filters"
+        let(:args) { {project: valid_project} }
+
+        it "returns an error" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Left
+          expect(js.left["status"]).to eq("badrequest")
+          expect(js.left["message"]).to match(/^No query filters provided$/)
+        end
+      end
+
+      context "filtering on job" do
+        use_vcr_cassette "jobs/update/job"
+        let(:args) { {project: valid_project, job: ["1/3/7", "1/1/18"], add_tag: "baz"} }
+
+        it "returns ok status and the affected count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["count"]}.right).to eq(2)
+        end
+      end
+
+      context "filtering on spider" do
+        use_vcr_cassette "jobs/update/spider"
+        let(:args) { {project: valid_project, spider: "atlantic_firearms_crawl", add_tag: "foo"} }
+
+        it "returns ok status and the affected count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["count"]}.right).to eq(11)
+        end
+      end
+
+      context "filtering on state" do
+        use_vcr_cassette "jobs/update/state"
+        let(:args) { {project: valid_project, state: "running", add_tag: "bar"} }
+
+        it "returns ok status and the affected count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["count"]}.right).to eq(2)
+        end
+      end
+
+      context "filtering on has_tag" do
+        use_vcr_cassette "jobs/update/has_tag"
+        let(:args) { {project: valid_project, has_tag: "bar", remove_tag: "bar"} }
+
+        it "returns ok status and the affected count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["count"]}.right).to eq(4)
+        end
+      end
+
+      context "filtering on lacks_tag" do
+        use_vcr_cassette "jobs/update/lacks_tag"
+        let(:args) { {project: valid_project, lacks_tag: "bar", add_tag: "bar"} }
+
+        it "returns ok status and the affected count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["count"]}.right).to eq(18)
+        end
+      end
+    end
+
+    context "update parameters" do
+      context "without update parameters" do
+        use_vcr_cassette "jobs/update/no-update-params"
+
+        it "returns an error" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Left
+          expect(js.left["status"]).to eq("badrequest")
+          expect(js.left["message"]).to match(/^No update modifiers provided$/)
+        end
+      end
     end
   end
 
