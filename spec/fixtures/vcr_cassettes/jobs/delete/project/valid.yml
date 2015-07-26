@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://XXX:@dash.scrapinghub.com/api/jobs/delete.json
+    body:
+      encoding: UTF-8
+      string: project=1
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: missing 'job' argument
+    headers:
+      Server:
+      - nginx/1.8.0
+      Date:
+      - Sat, 25 Jul 2015 22:15:23 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '61'
+      Connection:
+      - keep-alive
+      Vary:
+      - Cookie
+    body:
+      encoding: UTF-8
+      string: '{"status": "badrequest", "message": "missing ''job'' argument"}'
+    http_version: 
+  recorded_at: Sat, 25 Jul 2015 22:15:23 GMT
+recorded_with: VCR 2.9.3

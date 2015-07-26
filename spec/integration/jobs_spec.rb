@@ -253,6 +253,123 @@ describe "jobs integration" do
         end
       end
     end
-
   end
+
+  describe "delete" do
+    let(:action)        { :delete }
+    let(:valid_project) { 1 }
+    let(:args)          { {project: valid_project, job: "#{valid_project}/1/7"} }
+
+    it_behaves_like "connection_refused_returns_try"
+    it_behaves_like "bad_auth_returns_try", "jobs/delete/bad_auth"
+
+    context "project" do
+      context "given an invalid / non-owned project ID" do
+        use_vcr_cassette "jobs/delete/project/invalid"
+        let(:invalid_project) { 2 }
+
+        it "returns a Left" do
+          expect(jobs.send(action, args.merge(project: invalid_project))).to be_a Kleisli::Either::Left
+        end
+      end
+    end
+
+    context "job" do
+      context "given a single job" do
+        use_vcr_cassette "jobs/delete/job/single"
+        let(:job)  { "#{valid_project}/3/4" }
+        let(:args) { {project: valid_project, job: job} }
+
+        it "returns the right count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["count"]}.right).to eq(1)
+        end
+      end
+
+      context "given a list of multiple jobs" do
+        use_vcr_cassette "jobs/delete/job/multiple"
+        let(:job)  { ["#{valid_project}/1/7", "#{valid_project}/1/8"] }
+        let(:args) { {project: valid_project, job: job} }
+
+        it "returns the right count" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["count"]}.right).to eq(2)
+        end
+      end
+
+      context "given an invalid/non-existent job" do
+        use_vcr_cassette "jobs/delete/job/invalid"
+        let(:job)  { "#{valid_project}/1/123" }
+        let(:args) { {project: valid_project, job: job} }
+
+        it "returns count of 0" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["count"]}.right).to eq(0)
+        end
+      end
+    end
+  end
+
+  describe "stop" do
+    let(:action)        { :stop }
+    let(:valid_project) { 1 }
+    let(:args)          { {project: valid_project, job: "#{valid_project}/1/9"} }
+
+    it_behaves_like "connection_refused_returns_try"
+    it_behaves_like "bad_auth_returns_try", "jobs/stop/bad_auth"
+
+    context "project" do
+      context "given an invalid / non-owned project ID" do
+        use_vcr_cassette "jobs/stop/project/invalid"
+        let(:invalid_project) { 2 }
+
+        it "returns a Left" do
+          expect(jobs.send(action, args.merge(project: invalid_project))).to be_a Kleisli::Either::Left
+        end
+      end
+    end
+
+    context "job" do
+      context "given a valid job" do
+        use_vcr_cassette "jobs/stop/job/valid"
+        let(:job)  { "#{valid_project}/1/9" }
+        let(:args) { {project: valid_project, job: job} }
+
+        it "returns ok" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+        end
+      end
+
+      context "given a non-existent job" do
+        use_vcr_cassette "jobs/stop/job/invalid"
+        let(:job)  { "#{valid_project}/123/123" }
+        let(:args) { {project: valid_project, job: job} }
+
+        it "returns ok" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+        end
+      end
+
+      context "given an already-stopped job" do
+        use_vcr_cassette "jobs/stop/job/already-stopped"
+        let(:job)  { "#{valid_project}/1/6" }
+        let(:args) { {project: valid_project, job: job} }
+
+        it "returns ok" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+        end
+      end
+
+    end
+  end
+
 end
