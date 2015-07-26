@@ -255,6 +255,85 @@ describe "jobs integration" do
     end
   end
 
+  describe "schedule" do
+    let(:action)        { :schedule }
+    let(:valid_project) { 1 }
+    let(:args)          { {project: valid_project, spider: "atlantic_firearms_crawl"} }
+
+    it_behaves_like "connection_refused_returns_try"
+    it_behaves_like "bad_auth_returns_try", "jobs/schedule/bad_auth"
+
+    context "project" do
+      context "given an invalid / non-owned project ID" do
+        use_vcr_cassette "jobs/schedule/project/invalid"
+        let(:invalid_project) { 2 }
+
+        it "returns a Left" do
+          js = jobs.send(action, args.merge(project: invalid_project))
+          expect(js).to be_a Kleisli::Either::Left
+          expect(js.left['status']).to eq("badrequest")
+        end
+      end
+    end
+
+    context "spider" do
+      context "given minimal parameters" do
+        use_vcr_cassette "jobs/schedule/spider/minimal"
+
+        it "returns ok status and the created jobid" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["jobid"]}.right).to eq("1/1/11")
+        end
+      end
+
+      context "when an instance of the spider is already running" do
+        use_vcr_cassette "jobs/schedule/spider/already-running"
+
+        it "returns ok status and the error message" do
+          js = jobs.send(action, args)
+          expect(js).to be_a Kleisli::Either::Left
+          expect(js.left["status"]).to eq("error")
+          expect(js.left["message"]).to match(/^Spider.*already scheduled$/)
+        end
+      end
+
+      context "given an add_tag argument" do
+        use_vcr_cassette "jobs/schedule/spider/add_tag"
+
+        it "returns ok status and the created jobid" do
+          js = jobs.send(action, args.merge(add_tag: "foo"))
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["jobid"]}.right).to eq("1/1/14")
+        end
+      end
+
+      context "given a priority argument" do
+        use_vcr_cassette "jobs/schedule/spider/priority"
+
+        it "returns ok status and the created jobid" do
+          js = jobs.send(action, args.merge(priority: 4))
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["jobid"]}.right).to eq("1/1/16")
+        end
+      end
+
+      context "given an extra argument" do
+        use_vcr_cassette "jobs/schedule/spider/extra"
+
+        it "returns ok status and the created jobid" do
+          js = jobs.send(action, args.merge(extra: {:"DOWNLOAD_DELAY" => "0.5"}))
+          expect(js).to be_a Kleisli::Either::Right
+          expect(js.fmap{|j| j["status"]}.right).to eq("ok")
+          expect(js.fmap{|j| j["jobid"]}.right).to eq("1/1/17")
+        end
+      end
+    end
+  end
+
   describe "delete" do
     let(:action)        { :delete }
     let(:valid_project) { 1 }

@@ -1,0 +1,38 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://XXX:@dash.scrapinghub.com/api/schedule.json
+    body:
+      encoding: UTF-8
+      string: project=1&spider=atlantic_firearms_crawl
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 403
+      message: FORBIDDEN
+    headers:
+      Server:
+      - nginx/1.8.0
+      Date:
+      - Sun, 26 Jul 2015 01:10:47 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Cookie
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status": "error", "message": "Authentication failed"}'
+    http_version: 
+  recorded_at: Sun, 26 Jul 2015 01:10:48 GMT
+recorded_with: VCR 2.9.3

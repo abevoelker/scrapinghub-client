@@ -1,0 +1,39 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: http://XXX:@dash.scrapinghub.com/api/schedule.json
+    body:
+      encoding: UTF-8
+      string: project=1&spider=atlantic_firearms_crawl
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: BAD REQUEST
+    headers:
+      Server:
+      - nginx/1.8.0
+      Date:
+      - Sun, 26 Jul 2015 01:37:49 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '84'
+      Connection:
+      - keep-alive
+      Vary:
+      - Cookie
+    body:
+      encoding: UTF-8
+      string: '{"status": "error", "message": "Spider ''atlantic_firearms_crawl''
+        already scheduled"}'
+    http_version: 
+  recorded_at: Sun, 26 Jul 2015 01:37:49 GMT
+recorded_with: VCR 2.9.3
