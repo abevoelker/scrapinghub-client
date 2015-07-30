@@ -21,7 +21,7 @@ Add to Gemfile:
 gem "scrapinghub-client"
 ```
 
-**Note**: although the gem is named `scrapinghub-client`, the gem's namespace is `ScrapingHub`.
+**Note**: although the gem is named `scrapinghub-client`, the gem's namespace is `Scrapinghub`.
 
 Example
 --------
@@ -29,7 +29,7 @@ Example
 ```ruby
 require "scrapinghub-client"
 
-j = ScrapingHub::Jobs.new(api_key: 'abc123')
+j = Scrapinghub::Jobs.new(api_key: 'abc123')
 j.schedule(project: 123, spider: "foo", add_tag: "bar", extra: { DOWNLOAD_DELAY: "0.5" })
   .fmap{|r| puts "Job scheduled! Jobid: #{r['jobid']}"}
   .or{|f| puts "Failed to schedule job! Reason: #{f.inspect}"}
@@ -40,7 +40,7 @@ j.schedule(project: 123, spider: "foo", add_tag: "bar", extra: { DOWNLOAD_DELAY:
 [codeclimate]: https://codeclimate.com/github/abevoelker/scrapinghub-client
 [api]: http://doc.scrapinghub.com/api.html
 [jobs-api]: http://doc.scrapinghub.com/jobs.html
-[docs]: http://www.rubydoc.info/github/abevoelker/scrapinghub-client/master/ScrapingHub/Jobs
+[docs]: http://www.rubydoc.info/github/abevoelker/scrapinghub-client/master/Scrapinghub/Jobs
 [contracts]: https://github.com/egonSchiele/contracts.ruby/blob/master/TUTORIAL.md
 [kleisli]: https://github.com/txus/kleisli
 [kleisli-blog]: http://thoughts.codegram.com/cleaner-safer-ruby-api-clients-with-kleisli/

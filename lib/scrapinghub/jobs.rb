@@ -2,7 +2,7 @@ require "contracts"
 require "kleisli"
 require "httparty"
 
-module ScrapingHub
+module Scrapinghub
   class Jobs
     include Contracts
     include HTTParty

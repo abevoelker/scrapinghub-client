@@ -25,7 +25,7 @@ end
 
 describe "jobs integration" do
   let(:api_key) { "XXX" }
-  let(:jobs)    { ScrapingHub::Jobs.new(api_key: api_key) }
+  let(:jobs)    { Scrapinghub::Jobs.new(api_key: api_key) }
 
   describe "list" do
     let(:action)        { :list }

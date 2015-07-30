@@ -7,20 +7,20 @@ shared_examples "disallows_unknown_keys" do
   end
 end
 
-describe ScrapingHub::Jobs do
-  let(:jobs) { ScrapingHub::Jobs.new(api_key: 'XXX') }
+describe Scrapinghub::Jobs do
+  let(:jobs) { Scrapinghub::Jobs.new(api_key: 'XXX') }
 
   context "initialization" do
     context "api_key" do
       it "is required" do
-        expect{ScrapingHub::Jobs.new}.to raise_error ParamContractError
-        expect{ScrapingHub::Jobs.new({})}.to raise_error ParamContractError
+        expect{Scrapinghub::Jobs.new}.to raise_error ParamContractError
+        expect{Scrapinghub::Jobs.new({})}.to raise_error ParamContractError
       end
 
       it "must be a String" do
-        expect{ScrapingHub::Jobs.new(api_key: nil)}.to raise_error ParamContractError
-        expect{ScrapingHub::Jobs.new(api_key: 1)}.to raise_error ParamContractError
-        expect(ScrapingHub::Jobs.new(api_key: "foo")).to be_a ScrapingHub::Jobs
+        expect{Scrapinghub::Jobs.new(api_key: nil)}.to raise_error ParamContractError
+        expect{Scrapinghub::Jobs.new(api_key: 1)}.to raise_error ParamContractError
+        expect(Scrapinghub::Jobs.new(api_key: "foo")).to be_a Scrapinghub::Jobs
       end
     end
   end

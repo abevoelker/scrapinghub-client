@@ -1,3 +1,3 @@
-module ScrapingHub
+module Scrapinghub
   VERSION = "0.0.1"
 end

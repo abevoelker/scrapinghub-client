@@ -3,12 +3,12 @@ require File.expand_path("../lib/scrapinghub/version", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "scrapinghub-client"
-  s.version     = ScrapingHub::VERSION
+  s.version     = Scrapinghub::VERSION
   s.authors     = ["Abe Voelker"]
   s.email       = "abe@abevoelker.com"
   s.homepage    = "https://github.com/abevoelker/scrapinghub-client"
-  s.summary     = %q{Ruby client for ScrapingHub API}
-  s.description = %q{Ruby client for ScrapingHub API}
+  s.summary     = %q{Ruby client for Scrapinghub API}
+  s.description = %q{Ruby client for Scrapinghub API}
   s.license     = "MIT"
 
   s.require_paths = ["lib"]
