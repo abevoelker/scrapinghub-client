@@ -2,7 +2,7 @@
 require File.expand_path("../lib/scrapinghub/version", __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = "scrapinghub"
+  s.name        = "scrapinghub-client"
   s.version     = ScrapingHub::VERSION
   s.authors     = ["Abe Voelker"]
   s.email       = "abe@abevoelker.com"

@@ -5,7 +5,7 @@ end
 require "rspec"
 require "webmock/rspec"
 require "vcr"
-require "scrapinghub"
+require "scrapinghub-client"
 
 RSpec::Expectations.configuration.warn_about_potential_false_positives = false
 
