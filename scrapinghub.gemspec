@@ -8,11 +8,10 @@ Gem::Specification.new do |s|
   s.email       = "abe@abevoelker.com"
   s.homepage    = "https://github.com/abevoelker/scrapinghub-client"
   s.summary     = %q{Ruby client for Scrapinghub API}
-  s.description = %q{Ruby client for Scrapinghub API}
+  s.description = s.summary
   s.license     = "MIT"
 
   s.require_paths = ["lib"]
-  s.require_paths = [ "lib" ]
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {spec}/*`.split("\n")
 
