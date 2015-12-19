@@ -5,8 +5,8 @@ shared_examples "connection_refused_returns_try" do
     stub_request(:any, "dash.scrapinghub.com").to_timeout
   end
 
-  it "returns a Try::Failure when host is down" do
-    expect(jobs.send(action, args)).to be_a Kleisli::Try::Failure
+  it "returns a Kleisli::Either::Left when host is down" do
+    expect(jobs.send(action, args)).to be_a Kleisli::Either::Left
   end
 end
 

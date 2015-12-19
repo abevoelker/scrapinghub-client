@@ -25,7 +25,7 @@ module Scrapinghub
                          :state => Optional[Or["pending", "running", "finished"]],
                          :has_tag => Optional[Or[String, ArrayOf[String]]],
                          :lacks_tag => Optional[Or[String, ArrayOf[String]]],
-                         :count => Optional[Nat] ] => Or[Kleisli::Try, Kleisli::Either]
+                         :count => Optional[Nat] ] => Kleisli::Either
     # Retrieve information about jobs.
     #
     # @param project [Fixnum] the project's numeric ID
@@ -41,13 +41,13 @@ module Scrapinghub
     #   containing the given tag(s)
     # @param count [Fixnum] (optional) maximum number of jobs to return
     #
-    # @return [Kleisli::Try, Kleisli::Either] a Kleisli::Try if a low-level
-    #   exception is raised (e.g. the host is down), a Kleisli::Either::Left
-    #   if validation fails (e.g. bad authentication), or a
-    #   Kleisli::Either::Right if everything was successful.
+    # @return [Kleisli::Left] if validation fails (e.g. bad authentication) or
+    #   if there were any low-level exceptions (e.g. the host is down), with a
+    #   message detailing the failure.
+    # @return [Kleisli::Right] if the operation was successful.
     def list(args)
       options = { query: args, basic_auth: { username: @api_key } }
-      Try { self.class.get("/api/jobs/list.json", options) } >-> response {
+      Try { self.class.get("/api/jobs/list.json", options) }.to_either >-> response {
         if response.code == 200
           Right(response)
         else
@@ -60,7 +60,7 @@ module Scrapinghub
                          :spider => String,
                          :add_tag => Optional[Or[String, ArrayOf[String]]],
                          :priority => Optional[Or[0, 1, 2, 3, 4]],
-                         :extra => Optional[HashOf[Symbol => String]] ] => Or[Kleisli::Try, Kleisli::Either]
+                         :extra => Optional[HashOf[Symbol => String]] ] => Kleisli::Either
     # Schedule a job.
     #
     # @param project [Fixnum] the project's numeric ID
@@ -71,14 +71,14 @@ module Scrapinghub
     # @param extra [Hash] (optional) extra parameters passed as spider
     #   arguments
     #
-    # @return [Kleisli::Try, Kleisli::Either] a Kleisli::Try if a low-level
-    #   exception is raised (e.g. the host is down), a Kleisli::Either::Left
-    #   if validation fails (e.g. bad authentication), or a
-    #   Kleisli::Either::Right if everything was successful.
+    # @return [Kleisli::Left] if validation fails (e.g. bad authentication) or
+    #   if there were any low-level exceptions (e.g. the host is down), with a
+    #   message detailing the failure.
+    # @return [Kleisli::Right] if the operation was successful.
     def schedule(args)
       extra = args.delete(:extra) || {}
       options = { body: args.merge(extra), basic_auth: { username: @api_key } }
-      Try { self.class.post("/api/schedule.json", options) } >-> response {
+      Try { self.class.post("/api/schedule.json", options) }.to_either >-> response {
         if response.code == 200
           Right(response)
         else
@@ -94,7 +94,7 @@ module Scrapinghub
                          :has_tag => Optional[Or[String, ArrayOf[String]]],
                          :lacks_tag => Optional[Or[String, ArrayOf[String]]],
                          :add_tag => Optional[Or[String, ArrayOf[String]]],
-                         :remove_tag => Optional[Or[String, ArrayOf[String]]] ] => Or[Kleisli::Try, Kleisli::Either]
+                         :remove_tag => Optional[Or[String, ArrayOf[String]]] ] => Kleisli::Either
     # Update information about jobs.
     #
     # @param project [Fixnum] the project's numeric ID
@@ -112,13 +112,13 @@ module Scrapinghub
     # @param remove_tag [String, Array<String>] (optional) tag(s) to remove
     #   from the queried jobs
     #
-    # @return [Kleisli::Try, Kleisli::Either] a Kleisli::Try if a low-level
-    #   exception is raised (e.g. the host is down), a Kleisli::Either::Left
-    #   if validation fails (e.g. bad authentication), or a
-    #   Kleisli::Either::Right if everything was successful.
+    # @return [Kleisli::Left] if validation fails (e.g. bad authentication) or
+    #   if there were any low-level exceptions (e.g. the host is down), with a
+    #   message detailing the failure.
+    # @return [Kleisli::Right] if the operation was successful.
     def update(args)
       options = { body: args, basic_auth: { username: @api_key } }
-      Try { self.class.post("/api/jobs/update.json", options) } >-> response {
+      Try { self.class.post("/api/jobs/update.json", options) }.to_either >-> response {
         if response.code == 200
           Right(response)
         else
@@ -128,19 +128,19 @@ module Scrapinghub
     end
 
     Contract KeywordArgs[:project => Nat,
-                         :job => Or[String, ArrayOf[String]] ] => Or[Kleisli::Try, Kleisli::Either]
+                         :job => Or[String, ArrayOf[String]] ] => Kleisli::Either
     # Delete one or more jobs.
     #
     # @param project [Fixnum] the project's numeric ID
     # @param job [String, Array<String>] the ID of a specific job to delete
     #
-    # @return [Kleisli::Try, Kleisli::Either] a Kleisli::Try if a low-level
-    #   exception is raised (e.g. the host is down), a Kleisli::Either::Left
-    #   if validation fails (e.g. bad authentication), or a
-    #   Kleisli::Either::Right if everything was successful.
+    # @return [Kleisli::Left] if validation fails (e.g. bad authentication) or
+    #   if there were any low-level exceptions (e.g. the host is down), with a
+    #   message detailing the failure.
+    # @return [Kleisli::Right] if the operation was successful.
     def delete(args)
       options = { body: args, basic_auth: { username: @api_key } }
-      Try { self.class.post("/api/jobs/delete.json", options) } >-> response {
+      Try { self.class.post("/api/jobs/delete.json", options) }.to_either >-> response {
         if response.code == 200
           Right(response)
         else
@@ -150,19 +150,19 @@ module Scrapinghub
     end
 
     Contract KeywordArgs[:project => Nat,
-                         :job => String ] => Or[Kleisli::Try, Kleisli::Either]
+                         :job => String ] => Kleisli::Either
     # Stop one or more running jobs.
     #
     # @param project [Fixnum] the project's numeric ID
     # @param job [String] the ID of a job to stop
     #
-    # @return [Kleisli::Try, Kleisli::Either] a Kleisli::Try if a low-level
-    #   exception is raised (e.g. the host is down), a Kleisli::Either::Left
-    #   if validation fails (e.g. bad authentication), or a
-    #   Kleisli::Either::Right if everything was successful.
+    # @return [Kleisli::Left] if validation fails (e.g. bad authentication) or
+    #   if there were any low-level exceptions (e.g. the host is down), with a
+    #   message detailing the failure.
+    # @return [Kleisli::Right] if the operation was successful.
     def stop(args)
       options = { body: args, basic_auth: { username: @api_key } }
-      Try { self.class.post("/api/jobs/stop.json", options) } >-> response {
+      Try { self.class.post("/api/jobs/stop.json", options) }.to_either >-> response {
         if response.code == 200
           Right(response)
         else

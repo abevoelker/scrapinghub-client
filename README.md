@@ -8,7 +8,7 @@ Scrapinghub client
 
 Ruby client for the [Scrapinghub API][api]. So far it only supports the [Jobs API][jobs-api] (pull requests welcome).
 
-This library tries to take an FP-ish approach. It uses the [contracts gem][contracts] for validating function input and output types (see the [docs][] for the full list of functions and their types) and the [kleisli gem][kleisli] for returning composition-friendly output types. Outputs will be a `Try::Failure` if an exception was raised (e.g. a network timeout), a `Left` if the Scrapinghub API returns failure, or a `Right` if the operation was successful.
+This library tries to take an FP-ish approach. It uses the [contracts gem][contracts] for validating function input and output types (see the [docs][] for the full list of functions and their types) and the [kleisli gem][kleisli] for returning composition-friendly output types. Outputs will be a `Left` if the Scrapinghub API returns failure or if an exception was raised (e.g. a network timeout), or a `Right` if the operation was successful.
 
 The Kleisli gem [introductory blog post][kleisli-blog] gives some great examples on how to work with the output types.
 
@@ -32,7 +32,7 @@ require "scrapinghub-client"
 j = Scrapinghub::Jobs.new(api_key: 'abc123')
 j.schedule(project: 123, spider: "foo", add_tag: "bar", extra: { DOWNLOAD_DELAY: "0.5" })
   .fmap{|r| puts "Job scheduled! Jobid: #{r['jobid']}"}
-  .or{|f| puts "Failed to schedule job! Reason: #{f.inspect}"}
+  .or{|f| puts "Failed to schedule job! Reason: #{f.value}"}
 ```
 
 [travis]: https://travis-ci.org/abevoelker/scrapinghub-client

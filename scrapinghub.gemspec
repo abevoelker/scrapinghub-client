@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {spec}/*`.split("\n")
 
   s.add_dependency "contracts", "~> 0.11"
-  s.add_dependency "kleisli"
+  s.add_dependency "kleisli", ">= 0.2.7"
   s.add_dependency "httparty"
 
   s.add_development_dependency "rake"
